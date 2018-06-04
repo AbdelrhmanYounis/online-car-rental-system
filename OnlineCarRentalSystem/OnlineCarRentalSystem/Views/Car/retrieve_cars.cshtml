@@ -1,0 +1,370 @@
+﻿@model OnlineCarRentalSystem.ViewModel.CarsCategory
+    
+@{
+    ViewBag.Title = "Cars List";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+    
+
+}
+<br>
+
+<div style="background-color:#2F4F4F;border-radius:25px; padding:1%0%1%4%;color:wheat">
+    <input class="form-control" placeholder="Search" type="text" id="search_box">
+    <h6>* if you want to know avialable car write " yes " or unavialable car write " no "</h6>
+</div>
+
+<br>
+<button type="button" onclick="new_car_body()" class="btn btn-primary">new Car</button>
+
+        <div id="DataSearching">
+            @foreach (var item in Model.categories)
+            {
+                <br>
+                <div class="panel">
+                    <div class="panel-heading"style="background-color:#2F4F4F;">
+                        <h3>
+                            <img src="~/uploads/category/@item.Image" class="category_image" />
+                            @Html.DisplayFor(modelItem => Model.categories.Single(q => q.id == item.id).category)
+                        </h3>
+                        <hr style="background-color:floralwhite;">
+                    </div>
+
+                    
+                    <div class="panel-body"style="background:linear-gradient(#2F4F4F,#B0E0E6);">
+                        @foreach (var subitem in Model.cars.Where(c => c.car_category_id == item.id))
+                {
+
+                            <div class="col-md-4 text-center block" style="margin-bottom:30px" id="car_@subitem.Id">
+                                <div class="card">
+                                    <div class="front">
+                                        <header>
+                                            <img src="~/uploads/car/@subitem.Image" />
+                                        </header>
+
+
+                                    </div>
+                                    <div class="back">
+                                        <ul>
+                                            <li>
+                                                @Html.LabelFor(x => x.cars.Single().Model) :
+                                                @Html.DisplayFor(modelItem => subitem.Model)
+                                            </li>
+                                            <li>
+                                                @Html.LabelFor(x => x.cars.Single().Color) :
+                                                @Html.DisplayFor(modelItem => subitem.Color)
+                                            </li>
+                                            <li>
+                                                @Html.LabelFor(x => x.cars.Single().NumberOfChair) :
+                                                @Html.DisplayFor(modelItem => subitem.NumberOfChair)
+                                            </li>
+                                            <li>
+                                                @Html.LabelFor(x => x.cars.Single().PriceOfRent) :
+                                                @Html.DisplayFor(modelItem => subitem.PriceOfRent)
+                                            </li>
+                                            <li>
+                                                @Html.LabelFor(x => x.cars.Single().IsAvialable) :
+                                                @if (subitem.IsAvialable)
+                                                {
+                                                    @Html.Label("Yes")
+                                                }
+                                                else
+                                                {
+                                                    @Html.Label("No")
+                                                }
+                                            </li>
+                                        </ul>
+
+                                    </div>
+                                </div>
+                                @if (Model.UserRoleId == 3)
+                                {
+                                    <button type="button" onclick="CarModalRent(@subitem.Id)" class="btn" style="background-color:#2F4F4F;color:wheat;">Rent</button>
+                                }
+                                else {
+                                <button type="button" onclick="edit_car_modal(@subitem.Id)" class="btn btn-primary glyphicon glyphicon-edit">Edit</button>
+
+                                <button type="button" onclick="CarModalDelete(@subitem.Id)" class="btn btn-danger glyphicon glyphicon-remove">Delete</button>
+                                
+                               if (subitem.IsAvialable)
+                                {
+                                    <button type="button" id="unavialable" onclick="CarModalState(@subitem.Id,1)" value="unavialable" class="btn btn-danger glyphicon glyphicon-folder-close">Unavialable</button>
+                                }
+                                else
+                                {
+                                    <button type="button" id="avialable" onclick="CarModalState(@subitem.Id,0)" value="avialable" class="btn btn-success glyphicon glyphicon-folder-open">Avialable</button>
+                                }
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+
+            }
+        </div>
+@*------------------------------------------------------------------*@
+<input type="hidden" id="hidden_car_id">
+<input type="hidden" id="hidden_modal">
+@*------------------------------------------------------*@
+<!-- Delete-Transform-Modal -->
+<div id="delete_modal" class="modal fade " role="dialog" style="position:absolute; top:50%; left: 36%; width: 1000px; height: 300px; margin-left: -150px; margin-top: -150px">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" id="modify_title"></h4>
+            </div>
+            <div class="modal-body">
+                <h4 id="modify_body"> </h4>
+            </div>
+            <div class="modal-footer">
+
+                <button type="button" class="btn btn-default" data-dissmiss="modal" id="close">cancel</button>
+                <span  id="delete_button" hidden>
+                <button type="button" class="btn btn-success" onclick="delete_car()" >Delete</button>
+                     </span>
+                 <span id="transform_button" hidden>
+                <button type="button"  class="btn btn-success" onclick="transform_car()" >Transform</button>
+                     </span>
+</div>
+        </div>
+
+    </div>
+</div>
+@*------------------------------------------------------------------*@
+<!-- Edit-Modal -->
+<div id="edit_modal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Edit Car</h4>
+            </div>
+            <div class="modal-body" id="edit_car_modal">
+               
+            </div>
+            
+        </div>
+
+    </div>
+</div>
+@*---------------------new car---------------------------------------------*@
+<div id="new_car_modal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header"style="background-color:#2F4F4F;">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="modal-title">new Car</h3>
+            </div>
+            <div class="modal-body" id="new_car_body">
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+@*************************************rent**********************************************@
+<div id="rent_modal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:#2F4F4F;">
+                <button type="button" class="btn btn-danger close" data-dismiss="modal">&times;</button>
+                <h3 class="modal-title">Rent Car</h3>
+            </div>
+
+            <div class="modal-body panel panel-success" id="period_car_modal">
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+       
+@section scripts
+
+{
+      <script>
+                $("#close").click(function () { $(this).parent().parent().parent().parent().modal('hide'); })
+                $ (function () {
+                    $("#car_image").change(function () {
+
+
+                        if ($("#car_image").val() != "") {
+                            //extention validation
+                            var filename = document.getElementById("car_image").value;
+                            var extention = filename.substr(filename.lastIndexOf('.') + 1);
+                            var validextention = ['bmp', 'gif', 'png', 'jpg', 'PNG'];
+                            if ($.inArray(extention, validextention) == -1) {
+
+                                $("#error-image").text("please select Image by valid extention").fadeIn(3000);
+                                $("#ImagePreview").hide();
+                                $("#car_image").text("");
+                                return false;
+                            }
+                            else {
+                                var File = this.files;
+                                ReadImage(File[0]);
+
+                            }
+                        }
+
+                    });
+                    /***********************************************************************/
+                    var ReadImage = function (file) {
+                        var reader = new FileReader;
+                        var image = new Image;
+
+                        reader.readAsDataURL(file)
+                        reader.onload = function (_file) {
+                            image.src = _file.target.result;
+                            image.onload = function () {
+                                $("#TargetImage").attr('src', image.src);
+                                $("#ImagePreview").show();
+                                $("#error-image").text("");
+                            }
+                        }
+                    }
+       /*********************************************************************************/
+                    $("#search_box").keyup(function () {
+
+                        var search_text = $("#search_box").val();
+                        if(search_text=="yes")
+                        {
+                            search_text="true";
+                        }
+                        else if(search_text=="no")
+                        {
+                            search_text="false";
+                        }
+                        $.ajax({
+                            type: "POST",
+                            url: "/User/search?search_text="+search_text+"&UserRoleId="+@Model.UserRoleId,
+                            
+                            contentType: "html",
+
+                            success: function (response) {
+                                $("#DataSearching").html(response);
+                            }
+
+                        })
+
+                    });
+
+                });
+                /****************************************************************************/
+                function CarModalDelete(car_id) {
+                    $("#hidden_car_id").val(car_id);
+
+                    $("#modify_title").text("Delete Car");
+                    $("#modify_body").text(" Are You Sure ? You want to delete this");
+                     $("#delete_modal").modal('show');
+
+                    $("#delete_button").show();
+                    $("#transform_button").hide();
+                }
+                /****************************************************************************/
+                function CarModalState(car_id,availability) {
+                    $("#hidden_car_id").val(car_id);
+                    $("#hidden_modal").val(0);
+                    $("#modify_title").text("Transform Car State");
+                    if(availability==1)
+                        $("#modify_body").text(" Are You Sure ? You want to make this car Unavailable");
+                    else
+                        $("#modify_body").text(" Are You Sure ? You want to make this car Available");
+
+                    $("#delete_modal").modal('show');
+                    $("#transform_button").show();
+                    $("#delete_button").hide();
+                }
+                /****************************************************************************/
+                var delete_car= function () {
+                    var carId = $("#hidden_car_id").val();
+
+                        $.ajax({
+                            type: "POST",
+                            url: "/Car/delete_car",
+                            data:{id:carId},
+
+                            success: function (response) {
+                                $("#delete_modal").modal('hide');
+                                $("#car_" + carId).remove();
+
+                            }
+
+                        })
+
+
+                }
+                /****************************************************************************/
+                var transform_car= function () {
+                    var carId = $("#hidden_car_id").val();
+
+                        $.ajax({
+                            type: "POST",
+                            url: "/Car/transform_car_state",
+                            data:{id:carId},
+
+                            success: function (response) {
+                                
+                                $("#edit_modal").modal('hide');
+                                window.location.href = "/Car/retrieve_cars?user_role_id="+2;
+                                if(response==1){
+                                
+                                    $("#unavialable").show();
+                                    $("#avialable").hide();
+                                }
+                                else if(response==0){
+                                    $("#avialable").show();
+                                    $("#unavialable").hide();
+                                }
+                                else
+                                    alert("The Operation Not Success");
+
+                            }
+
+                        })
+
+                }
+                /*************************************************************************************/
+                var edit_car_modal = function (edit_car_id) {
+
+                    var url = "/Car/edit_car?id=" + edit_car_id;
+                    $("#edit_car_modal").load(url, function () {
+
+                        $("#edit_modal").modal('show');
+                    })
+                }
+                
+                /*************************************************************************************/
+                var new_car_body = function () {
+
+                    var url = "/Car/add_car";
+                    $("#new_car_body").load(url, function () {
+
+                        $("#new_car_modal").modal('show');
+                    })
+                }
+                /*************************************************************************************/
+                var CarModalRent = function (rent_car_id) {
+
+                    var url = "/Customer/car_history?id=" + rent_car_id;
+                    $("#period_car_modal").load(url, function () {
+
+                        $("#rent_modal").modal('show');
+                    })
+                }
+                /****************************************************************************/
+              
+            </script>
+
+     }

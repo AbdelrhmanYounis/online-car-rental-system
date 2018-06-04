@@ -1,0 +1,85 @@
+﻿@model OnlineCarRentalSystem.ViewModel.CarsCategory
+
+
+@foreach (var item in Model.categories)
+            {
+    <div class="panel">
+        <div class="panel-heading"style="background-color:#2F4F4F;">
+            <h3>
+                <img src="~/uploads/category/@item.Image" class="category_image" />
+                @Html.DisplayFor(modelItem => Model.categories.Single(q => q.id == item.id).category)
+            </h3>
+            <hr style="background-color:floralwhite;">
+        </div>
+
+
+        <div class="panel-body" style="background:linear-gradient(#2F4F4F,#B0E0E6);">
+            @foreach (var subitem in Model.cars.Where(c => c.car_category_id == item.id))
+                {
+
+                <div class="col-md-4 text-center block" style="margin-bottom:30px" id="car_@subitem.Id">
+                    <div class="card">
+                        <div class="front">
+                            <header>
+                                <img src="~/uploads/car/@subitem.Image" />
+                            </header>
+
+
+                        </div>
+                        <div class="back">
+                            <ul>
+                                <li>
+                                    @Html.LabelFor(x => x.cars.Single().Model) :
+                                    @Html.DisplayFor(modelItem => subitem.Model)
+                                </li>
+                                <li>
+                                    @Html.LabelFor(x => x.cars.Single().Color) :
+                                    @Html.DisplayFor(modelItem => subitem.Color)
+                                </li>
+                                <li>
+                                    @Html.LabelFor(x => x.cars.Single().NumberOfChair) :
+                                    @Html.DisplayFor(modelItem => subitem.NumberOfChair)
+                                </li>
+                                <li>
+                                    @Html.LabelFor(x => x.cars.Single().PriceOfRent) :
+                                    @Html.DisplayFor(modelItem => subitem.PriceOfRent)
+                                </li>
+                                <li>
+                                    @Html.LabelFor(x => x.cars.Single().IsAvialable) :
+                                    @if (subitem.IsAvialable)
+                                    {
+                                        @Html.Label("Yes")
+                                    }
+                                    else
+                                    {
+                                        @Html.Label("No")
+                                    }
+                                </li>
+                            </ul>
+
+                        </div>
+                    </div>
+                    @if (Model.UserRoleId == 3)
+                    {
+                        <button type="button" onclick="CarModalRent(@subitem.Id)" class="btn" style="background-color:#2F4F4F;color:wheat;">Rent</button>
+                    }
+                    else {
+                    <button type="button" onclick="edit_car_modal(@subitem.Id)" class="btn btn-primary glyphicon glyphicon-edit">Edit</button>
+
+                    <button type="button" onclick="CarModalDelete(@subitem.Id)" class="btn btn-danger glyphicon glyphicon-remove">Delete</button>
+
+                        if (subitem.IsAvialable)
+                        {
+                        <button type="button" id="unavialable" onclick="CarModalState(@subitem.Id,1)" value="unavialable" class="btn btn-danger glyphicon glyphicon-folder-close">Unavialable</button>
+                        }
+                        else
+                        {
+                        <button type="button" id="avialable" onclick="CarModalState(@subitem.Id,0)" value="avialable" class="btn btn-success glyphicon glyphicon-folder-open">Avialable</button>
+                        }
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
+}

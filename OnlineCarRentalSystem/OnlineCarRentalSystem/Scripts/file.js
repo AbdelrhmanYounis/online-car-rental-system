@@ -1,0 +1,25 @@
+var myCanvas = document.getElementById('c'),
+    myContext = myCanvas.getContext('2d');
+myContext.font = '90px arial';
+myContext.fillStyle = '#f00';
+myContext.fillText('A', 20, 50);
+myContext.fillStyle = '#00f';
+myContext.fillText('B', 45, 80);
+myContext.fillStyle = '#080';
+myContext.fillText('D', 70, 115);
+myContext.fillStyle = '#f0f';
+myContext.fillText('E', 100, 140);
+myContext.fillStyle = '#f00';
+myContext.fillText('L', 120, 180);
+myContext.fillStyle = '#080';
+myContext.fillText('R', 140, 220);
+myContext.fillStyle = '#00f';
+myContext.fillText('M', 170, 260);
+myContext.fillStyle = '#080';
+myContext.fillText('A', 195, 300);
+myContext.fillStyle = '#f00';
+myContext.fillText('N', 220, 330);
+myContext.strokeStyle = '#000';
+myContext.lineWidth = 3;
+myContext.strokeText('YOUNIS', 50, 400);
+myContext.fillText('YOUNIS', 50, 400);

@@ -1,0 +1,162 @@
+﻿@model OnlineCarRentalSystem.ViewModel.CarCategory
+
+<div class="alert alert-success" style="display:none" id="success">
+    <strong>The Car Added Successfully</strong>
+    </div>
+
+<div class="alert alert-danger" style="display:none" id="fail">
+    <strong>The Car Added Failed</strong>
+</div>
+<form id="new" enctype="multipart/form-data">
+
+    <div class="form-group">
+        @Html.LabelFor(x => x.car.car_category_id, new { @class = "col-md-3 control-label" })
+        @Html.DropDownListFor(m => m.car.car_category_id, new SelectList(Model.categories, "id", "category"), "select Car Category", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.car.car_category_id, "", new { @class = "text-danger col-md-offset-3 col-md-9" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(x => x.car.Model, new { @class = "col-md-3 control-label"})
+        @Html.TextBoxFor(m => m.car.Model, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.car.Model, "", new { @class = "text-danger col-md-offset-3 col-md-9" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(x => x.car.Color, new { @class = "col-md-3 control-label" })
+        @Html.TextBoxFor(m => m.car.Color, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.car.Color, "", new { @class = "text-danger col-md-offset-3 col-md-9" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(x => x.car.NumberOfChair, new { @class = "col-md-3 control-label" })
+        @Html.TextBoxFor(m => m.car.NumberOfChair, new { @class = "form-control", type = "number",min="4",max="8"})
+        @Html.ValidationMessageFor(m => m.car.NumberOfChair, "", new { @class = "text-danger col-md-offset-3 col-md-9" })
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-3 thumbnail" id="ImagePreview" style="height:90px; width:90px; display:none">
+          <img class="img-responsive" id="TargetImage"/> 
+        </div>
+  </div>
+    <div class="form-group">
+        @Html.LabelFor(x => x.car.Image, new { @class = "col-md-3 control-label " })
+        <input type="file" name="upload" id="car_image" />
+   <span id="error-image" class = "text-danger col-md-offset-3 col-md-9" style="display:none">
+           
+        </span>
+     </div>
+
+    <div class="form-group">
+        @Html.LabelFor(x => x.car.PriceOfRent, new { @class = "col-md-3 control-label" })
+        @Html.TextBoxFor(m => m.car.PriceOfRent, new { @class = "form-control", type = "number",min = "50", max = "100000" })
+        @Html.ValidationMessageFor(m => m.car.PriceOfRent, "", new { @class = "text-danger col-md-offset-3 col-md-9" })
+    </div>
+
+    <div class="form-group">
+        <div class = "col-md-3">
+           
+            @Html.Label("Car State")
+        </div>
+        @Html.CheckBoxFor(m => m.car.IsAvialable)
+        @Html.LabelFor(x => x.car.IsAvialable)
+        
+        
+    </div>
+
+</form>
+<div class="modal-footer" style="border:none">
+    <input type="button" value="Add" class="btn" id="add" style="background-color:#2F4F4F;color:wheat;" />
+</div>
+@Html.ActionLink("Cars List", "retrieve_cars", "Car", new { user_role_id = 2 }, null)
+  @Scripts.Render("~/bundles/jqueryval")
+        <script>
+            var check_validation = false;
+            $(function () {
+                $("#car_image").change(function () {
+                   
+                      if ($("#car_image").val() != "") {
+                        
+                        var filename = document.getElementById("car_image").value;
+                        var extention = filename.substr(filename.lastIndexOf('.') + 1);
+                        var validextention = ['bmp', 'gif', 'png', 'jpg', 'PNG'];
+                        if ($.inArray(extention, validextention) == -1) {
+
+                            $("#error-image").text("please select Image by valid extention").fadeIn(2000);
+                            $("#ImagePreview").hide();
+                            $("#car_image").text("");
+                            
+                        }
+                        else {
+                            var File = this.files;
+                            ReadImage(File[0]);
+                             check_validation = true;
+                        }
+                    }
+
+                });
+    /*****************************************************************************************/
+                var ReadImage = function (file) {
+                    var reader = new FileReader;
+                    var image = new Image;
+
+                    reader.readAsDataURL(file)
+                    reader.onload = function (_file) {
+                        image.src = _file.target.result;
+                        image.onload = function () {
+                            $("#TargetImage").attr('src', image.src);
+                            $("#ImagePreview").show();
+                            $("#error-image").text("");
+                        }
+                    }
+                }
+            });
+            /********************************************************************************/
+            $("#add").click(function () {
+                
+             
+                if ($("#car_image").val() == "") {
+                    $("#error-image").text("please upload The Image").fadeIn(2000);
+                    return false;
+                }
+
+               else if (($("#new").valid())&&check_validation) {
+
+                    var File = $("#car_image")[0].files;
+                    form_data = $("#new").serialize();
+                    file_data = new FormData;
+                    file_data.append("upload", File[0])
+                   
+                    $.ajax({
+
+                        type: "POST",
+                        url: "Image_File_Name",
+                        contentType:false,
+                        processData: false,
+                        data: file_data,
+
+                        success: function (response) {
+                            if (response.result!="") {
+                                
+                                $.ajax({
+                                    type: "POST",
+                                    url: "add_car",
+                                    data: form_data,
+                                    success: function (response) {
+                                        
+                                        $("#success").fadeToggle(2000);
+                                        $("#success").fadeToggle(2000);
+                                        
+                                    },
+                                    error:function(){
+                                           
+                                        $("#fail").fadeToggle(2000);
+                                        $("#fail").fadeToggle(2000);
+                                              }
+                                })
+                            }
+                        }
+                        })
+                }
+    });
+    </script>
+
+

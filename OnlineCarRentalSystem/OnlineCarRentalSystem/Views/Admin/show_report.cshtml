@@ -1,0 +1,195 @@
+﻿@model OnlineCarRentalSystem.ViewModel.CarCustomerCategoryHistoryOfRent
+@{
+    ViewBag.Title = "show_report";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+    int total_customer = Model.customers.Count();
+    int total_car = Model.cars.Count();
+    int total_rent = Model.histories.Count();
+    int counter = 0;
+    int count = 0;
+}
+<br><br><br><br>
+    <section class="sections exprets">
+        <div class="container">
+            <div class="section-header text-center">
+
+                <h2 class="section-title">Our Exprets</h2>
+                <div class="line">
+                    <span></span>
+                </div>
+                <br><br>
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        @foreach (var item in Model.categories)
+                        {
+                            <button type="button" class="btn btn-success" onclick="getrow(@count)">
+
+                                @item.category
+                            </button>
+                            count++;
+                        }
+                    </div>
+                </div>
+               
+            </div>
+
+
+
+            <div class="row">
+                <table>
+                    @foreach (var item in Model.categories)
+                    {
+                        float customer_in_category = Model.customers.Where(c => c.prefer_car_category_id == item.id).Count();
+                        float car_in_category = Model.cars.Where(c => c.car_category_id == item.id).Count();
+                        float car_avialable = Model.cars.Where(c => c.car_category_id == item.id && c.IsAvialable).Count();
+                        float rental_ratio = 0;
+                        //float rental_ratio = Model.cars.Where(c => c.car_category_id == item.id &&
+                        //                                            c.Id == Model.histories.SingleOrDefault().car_id).Count();
+
+
+                        foreach (var subitem in Model.cars.Where(c => c.car_category_id == item.id))
+                        {
+
+                            foreach (var subinsubitem in Model.histories.Where(c => c.car_id == subitem.Id))
+                            {
+                                rental_ratio++;
+
+                            }
+                        }
+                       
+                        <tr id="category_@counter" hidden>
+                            <td>
+                                <div class="section-header text-center">
+                                    <button type="button" class="btn" onclick="getdata(@System.Math.Round((customer_in_category / total_customer), 2),@counter);
+                                                 getdata2(@System.Math.Round((car_in_category / total_car), 2),@counter);
+                                                 getdata3(@System.Math.Round((car_avialable / car_in_category), 2),@counter);
+                                                 getdata4(@System.Math.Round((rental_ratio / total_rent), 2),@counter);"
+                                             style="background-color:#2F4F4F;">
+                                        <img src="~/uploads/category/@item.Image" class="category_image" />
+
+                                        <br>
+                                        <br>
+                                        <div class="line">
+                                            <span></span>
+                                        </div>
+                                    </button>
+                                </div>
+                            </td>
+                            <td class="col-md-3 col-sm-6 col-xs-12" style="text-align:center;color:wheat;">
+
+                                <span id="more1_@counter" hidden>
+                                    Users
+                                    @System.Math.Round(((customer_in_category / total_customer)*100),2)%
+                                </span>
+
+                                <div id="circle1_@counter">
+                                </div>
+
+                            </td>
+                            <td class="col-md-3 col-sm-6 col-xs-12" style="text-align:center;color:wheat;">
+
+                                <span id="more2_@counter" hidden>
+                                    Cars
+                                    @System.Math.Round(((car_in_category / total_car)*100), 2)%
+                                </span>
+
+                                <div id="circle2_@counter">
+                                </div>
+
+                            </td>
+                            <td class="col-md-3 col-sm-6 col-xs-12" style="text-align:center;color:wheat;">
+
+                                <span id="more3_@counter" hidden>
+                                    Avialable Cars
+                                    @System.Math.Round(((car_avialable / car_in_category)*100), 2)%
+                                </span>
+
+                                <div id="circle3_@counter">
+                                </div>
+
+                            </td>
+
+                            <td class="col-md-3 col-sm-6 col-xs-12" style="text-align:center;color:wheat;">
+                                <span id="more4_@counter" hidden>
+                                    Rental Ratio
+                                    @System.Math.Round(((rental_ratio / total_rent)*100), 2)%
+                                </span>
+
+                                <div id="circle4_@counter">
+                                </div>
+
+                            </td>
+                        </tr>
+                        counter++;
+                    }
+                </table>
+
+
+
+            </div>
+        </div>
+    </section>
+
+    @section scripts
+{
+        <script>
+
+            function getrow(counter) {
+                $("#category_" + counter).toggle();
+                
+            }
+            function getdata(floater, counter) {
+                
+                
+                $("#more1_" + counter).show();
+                $("#circle1_" + counter).circleProgress({
+                    value: floater,
+                    size: 180,
+                    startAngle: 4.7,
+                    thickness: 105,
+                    animation: { duration: 3200 },
+                    fill: {
+                        gradient: ["red", "orange"]
+                    }
+                });
+            }
+            function getdata2(floater, counter) {
+                $("#more2_" + counter).show();
+                $("#circle2_" + counter).circleProgress({
+                    value: floater,
+                    size: 180,
+                    startAngle: 4.7,
+                    thickness: 90,
+                    fill: {
+                        gradient: ["#2F4F4F", "#5F9EA0"]
+                    }
+                });
+
+            }
+            function getdata3(floater, counter) {
+                $("#more3_" + counter).show();
+                $("#circle3_" + counter).circleProgress({
+                    value: floater,
+                    size: 180,
+                    startAngle: 4.7,
+                    thickness: 40,
+                    fill: {
+                        gradient: ["#1E90FF", "#4682B4"]
+                    }
+                });
+            }
+            function getdata4(floater, counter) {
+                $("#more4_" + counter).show();
+                $("#circle4_" + counter).circleProgress({
+                    value: floater,
+                    size: 180,
+                    startAngle: 4.7,
+                    fill: {
+                        gradient: ["purple", "violet"]
+                    }
+                });
+            }
+
+
+        </script>
+    }

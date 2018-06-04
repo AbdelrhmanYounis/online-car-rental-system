@@ -1,0 +1,112 @@
+﻿@model OnlineCarRentalSystem.ViewModel.UsersRoles
+@{
+    ViewBag.Title = "search_customer";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+    Styles.Render("~/Content/file.css");
+}
+
+<div class="panel">
+
+    <div class="panel-heading" style="background-color:#2F4F4F;">
+
+        <h3>
+            Customers
+
+        </h3>
+        <hr style="background-color:floralwhite;">
+    </div>
+
+
+    <div class="panel-body" style="background:linear-gradient(#2F4F4F,#B0E0E6);">
+
+        @foreach (var subitem in Model.users.Where(c => c.RoleTypeId == 3))
+        {
+
+            <div class="col-md-4 text-center block" style="margin-bottom:30px" id="user_@subitem.Id">
+                <div class="card">
+                    <div class="front">
+                        <header>
+                            <img src="~/uploads/user/@subitem.Image" />
+                        </header>
+
+
+                    </div>
+                    <div class="back">
+
+                        <ul>
+                            <li>
+                                @Html.LabelFor(x => x.users.Single().Name) :
+                                @Html.DisplayFor(modelItem => subitem.Name)
+                            </li>
+                            <li>
+                                @Html.LabelFor(x => x.users.Single().Address) :
+                                @Html.DisplayFor(modelItem => subitem.Address)
+                            </li>
+                            <li>
+                                @Html.LabelFor(x => x.users.Single().Email) :
+                                @Html.DisplayFor(modelItem => subitem.Email)
+                            </li>
+                            <li>
+                                @Html.LabelFor(x => x.users.Single().Phone) :
+                                @Html.DisplayFor(modelItem => subitem.Phone)
+                            </li>
+                            <li>
+                                @if (subitem.RoleTypeId == 3)
+                                {
+                                    var customer = Model.customers.SingleOrDefault(c => c.userId == subitem.Id);
+                                    @Html.Label("duration block : ");
+                                    if (customer.Isblocked == 0)
+                                    {
+                                        @Html.Label("No");
+                                    }
+                                    else
+                                    {
+                                        @Html.DisplayFor(modelItem => Model.historyofblock.Where(c => c.customer_id == customer.Id)
+                                                                                                          .OrderByDescending(w => w.Id)
+                                                                                                          .FirstOrDefault()
+                                                                                                          .block_duration);
+
+                                    }
+                                }
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                @{ var Customer = Model.customers.SingleOrDefault(c => c.userId == subitem.Id);
+                    if (Customer != null)
+                    {
+                        var block_of_customer = Model.historyofblock.Where(c => c.customer_id == Customer.Id)
+                                                                                       .OrderByDescending(w => w.Id)
+                                                                                       .FirstOrDefault();
+
+                        <button type="button" onclick="CustomerModalEdit(@subitem.Id,'@subitem.Name',@Customer.account)" class="btn btn-primary glyphicon glyphicon-edit">Edit</button>
+                        if (Customer.Isblocked == 0)
+                        {
+                            <button type="button" onclick="CustomerModalBlock(@subitem.Id,'@subitem.Name')" class="btn btn-primary glyphicon glyphicon-edit">Block</button>
+                        }
+                        else
+                        {
+
+                            var until = block_of_customer.end_block;
+                            <button type="button" onclick="CustomerModalUnblock(@subitem.Id,'@subitem.Name',@until.Day,@until.Month,@until.Year)" class="btn btn-primary glyphicon glyphicon-edit">Unblock</button>
+                        }
+                    }
+                }
+                <button type="button" onclick="UserModalDelete(@subitem.Id,'@subitem.Name')" class="btn btn-danger glyphicon glyphicon-remove">Delete</button>
+
+
+            </div>
+
+                    }
+
+
+    </div>
+
+</div>
+
+
+
+
+
+
+

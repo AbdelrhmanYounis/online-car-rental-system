@@ -1,0 +1,203 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Online - Rental - Car</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="~/Content/main.css" />
+    
+    @Styles.Render("~/Content/bootstrap.css")
+    @Styles.Render("~/Content/NotFound.css")
+
+    @Styles.Render("~/Content/file.css")
+    @Styles.Render("~/Content/style.css")
+</head>
+<body>
+
+    <!-- Header -->
+    <!-- Intro -->
+    <section id="intro" class="main style1 dark fullscreen">
+        <span class="logo">Online Rental Car</span>
+        <button type="button" onclick="login_form_modal()" class="my_login">Login</button>
+        <button type="button" onclick="Registration_form_modal()"class="my_register">Register</button>
+
+        <div class="content">
+
+            <header>
+                <h2>Hey.</h2>
+            </header>
+            <p>Welcome To <strong>Online - Rental - Car</strong> A Commercial Website Designed To Meet Your Needs</p>
+            <p>Here You Can Rent The Car You Want With The Lowest Prices And The Length Of Time You Need</p>
+            <footer>
+                <a href="#one" class="button style2 down">More</a>
+            </footer>
+
+        </div>
+    </section>
+
+    <!-- One -->
+    <section id="one" class="main style2 right dark fullscreen">
+        <div class="content box style2">
+            <header>
+                <h2>RENT NOW</h2>
+            </header>
+            <p>Here you can choose between many cars from many categories to choose the car that suits you at the price that suits you and for the length of time you need, you can choose the wrong offer for you also and the method of payment and choose the service you want, we hope you like our services.</p>
+        </div>
+        <a href="#two" class="button style2 down anchored">Next</a>
+    </section>
+
+    <!-- Two -->
+    <section id="two" class="main style2 left dark fullscreen">
+        <div class="content box style2">
+            <header>
+                <h2>OUR CATEGORIES</h2>
+            </header>
+            <p>Here you can choose the car you want from many categories and now you can choose your preferred model and the type of high-end car that suits you and the time you are under it with the ease of payment method of course and the lowest prices and you will find that all categories are characterized by quality.</p>
+        </div>
+        <a href="#three" class="button style2 down anchored">Next</a>
+    </section>
+
+    <section id="three" class="main style2 right dark fullscreen">
+        <div class="content box style2">
+            <header>
+                <h2>PRICES</h2>
+            </header>
+            <p>Here you can choose the car you want at the lowest prices and the best quality and payment method you prefer only choose the car you want from our categories and choose the time you want and choose the method of payment and received your rented car immediately.</p>
+        </div>
+        <a href="#work" class="button style2 down anchored">Next</a>
+    </section>
+
+    <!-- Work -->
+    <section id="work" class="main style3 primary">
+        <div class="content">
+            <header>
+                <h2>PRODUCTS</h2>
+                <p>These are examples of some of the cars and some categories we have on our car rental site. All you have to do is <strong><a class="login_link" href="">Login </a></strong> so Now you can rent the car you want at the lowest prices and for the length of time you want, so we hope that the level of service has received your satisfaction.</p>
+            </header>
+
+            <!-- Gallery  -->
+            <div class="gallery">
+                <article class="from-left">
+                    <a href="~/uploads/mazen/thumbs/pic1.jpg" class="image fit"><img src="~/uploads/mazen/thumbs/pic1.jpg" title="New Arrival" alt="Car Image" /></a>
+                </article>
+                <article class="from-right">
+                    <a href="~/uploads/mazen/thumbs/pic2.jpg" class="image fit"><img src="~/uploads/mazen/thumbs/pic2.jpg" title="New Arrival" alt="Car Image" /></a>
+                </article>
+                <article class="from-left">
+                    <a href="~/uploads/mazen/thumbs/pic3.jpg" class="image fit"><img src="~/uploads/mazen/thumbs/pic3.jpg" title="New Arrival" alt="Car Image" /></a>
+                </article>
+                <article class="from-right">
+                    <a href="~/uploads/mazen/thumbs/pic4.jpg" class="image fit"><img src="~/uploads/mazen/thumbs/pic4.jpg" title="New Arrival" alt="Car Image" /></a>
+                </article>
+                <article class="from-left">
+                    <a href="~/uploads/mazen/thumbs/pic5.jpg" class="image fit"><img src="~/uploads/mazen/thumbs/pic5.jpg" title="New Arrival" alt="Car Image" /></a>
+                </article>
+                <article class="from-right">
+                    <a href="~/uploads/mazen/thumbs/pic6.jpg" class="image fit"><img src="~/uploads/mazen/thumbs/pic6.jpg" title="New Arrival" alt="Car Image" /></a>
+                </article>
+            </div>
+
+
+            <header class="pa">
+                <h2>CATEGORIES</h2>
+            </header>
+
+            <div class="gallery my_bac">
+                <article class="from-left">
+                    <a href="~/uploads/mazen/thumbs/pic7.png" class="image fit"><img src="~/uploads/mazen/thumbs/pic7.png" title="BMW Cars" alt="Car Image" /></a>
+                </article>
+                <article class="from-right">
+                    <a href="~/uploads/mazen/thumbs/pic8.jpg" class="image fit"><img src="~/uploads/mazen/thumbs/pic8.jpg" title="CHEVROLET Cars" alt="Car Image" /></a>
+                </article>
+                <article class="from-left">
+                    <a href="~/uploads/mazen/thumbs/pic9.jpg" class="image fit"><img src="~/uploads/mazen/thumbs/pic9.jpg" title="HYUNDAI Cars" alt="Car Image" /></a>
+                </article>
+                <article class="from-right">
+                    <a href="~/uploads/mazen/thumbs/pic10.jpg" class="image fit"><img src="~/uploads/mazen/thumbs/pic10.jpg" title="KIA Cars" alt="Car Image" /></a>
+                </article>
+                <article class="from-left">
+                    <a href="~/uploads/mazen/thumbs/pic11.jpg" class="image fit"><img src="~/uploads/mazen/thumbs/pic11.jpg" title="MAZDA Cars" alt="Car Image" /></a>
+                </article>
+                <article class="from-right">
+                    <a href="~/uploads/mazen/thumbs/pic12.jpg" class="image fit"><img src="~/uploads/mazen/thumbs/pic12.jpg" title="MERCEDES Cars" alt="Car Image" /></a>
+                </article>
+            </div>
+
+        </div>
+    </section>
+
+    <div id="login_modal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:#2F4F4F;">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h3 style="font-size:40px;margin-top:-15px">Login</h3>
+                </div>
+
+                <div class="modal-body" id="login_form_modal" style="border:none;">
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    <div id="rigestration_modal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:#2F4F4F;">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h3 style="font-size:40px;margin-top:-15px">Registration</h3>
+                </div>
+
+                <div class="modal-body" id="Registration_form_modal" style="border:none;">
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+   
+    <!-- Scripts -->
+    <script src="~/Scripts/jquery.min.js"></script>
+    <script src="~/Scripts/jquery.poptrox.min.js"></script>
+    <script src="~/Scripts/jquery.scrolly.min.js"></script>
+    <script src="~/Scripts/jquery.scrollex.min.js"></script>
+    <script src="~/Scripts/skel.min.js"></script>
+    <script src="~/Scripts/util.js"></script>
+    <script src="~/Scripts/main.js"></script>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/jquery-1.12.1.min.js"></script>
+    <script src="~/Scripts/bootstrap.js"></script>
+        <script>
+            /*************************************************************************************/
+            var login_form_modal = function () {
+
+                var url = "/Home/UserLogin";
+                $("#login_form_modal").load(url, function () {
+
+                    $("#login_modal").modal('show');
+                })
+            }
+            /****************************************************************************/
+
+            /*************************************************************************************/
+            var Registration_form_modal = function () {
+
+                var url = "/Home/Registration";
+                $("#Registration_form_modal").load(url, function () {
+
+                    $("#rigestration_modal").modal('show');
+                })
+            }
+        </script>
+    
+</body>
+</html>

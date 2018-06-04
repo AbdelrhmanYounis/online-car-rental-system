@@ -1,0 +1,72 @@
+﻿@model OnlineCarRentalSystem.ViewModel.UsersRoles
+@{
+    ViewBag.Title = "partial_search";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+    Styles.Render("~/Content/file.css");
+}
+
+@foreach (var item in Model.roles.Where(c => c.id != 1))
+{
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3>
+                @Html.DisplayFor(modelItem => Model.roles.SingleOrDefault(q => q.id == item.id).Type)
+                @if (item.id == 2)
+                {
+                    <button style="margin-left:90%;margin-top:-5%" type="button" onclick="new_admin_modal()" class="btn btn-primary glyphicon glyphicon-new-window">New</button>
+                }
+             </h3>
+        </div>
+
+
+        <div class="panel-body">
+
+            @foreach (var subitem in Model.users.Where(c => c.RoleTypeId == item.id))
+            {
+
+                <div class="col-md-4 text-center block" style="margin-bottom:30px">
+                    <div class="card">
+                        <div class="front">
+                            <header>
+                                <img src="~/uploads/user/@subitem.Image" />
+
+                            </header>
+
+
+                        </div>
+                        <div class="back">
+
+                            <ul>
+                                <li>
+                                    @Html.LabelFor(x => x.users.Single().Name) :
+                                    @Html.DisplayFor(modelItem => subitem.Name)
+                                </li>
+                                <li>
+                                    @Html.LabelFor(x => x.users.Single().Address) :
+                                    @Html.DisplayFor(modelItem => subitem.Address)
+                                </li>
+                                <li>
+                                    @Html.LabelFor(x => x.users.Single().Email) :
+                                    @Html.DisplayFor(modelItem => subitem.Email)
+                                </li>
+                                <li>
+                                    @Html.LabelFor(x => x.users.Single().Phone) :
+                                    @Html.DisplayFor(modelItem => subitem.Phone)
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    @Html.ActionLink(" Edit", "edit_user", new { id = subitem.Id }, new { @class = "btn btn-success glyphicon glyphicon-edit" })
+                    <button type="button" value="Deleteposts" class="btn btn-danger glyphicon glyphicon-remove">Delete</button>
+                    @if (subitem.RoleTypeId == 2)
+                    {
+                        @Html.ActionLink(" Super", "#", new { id = subitem.Id }, new { @class = "btn btn-primary glyphicon glyphicon-asterisk" })
+                    }
+                </div>
+            }
+
+
+        </div>
+
+    </div>
+}

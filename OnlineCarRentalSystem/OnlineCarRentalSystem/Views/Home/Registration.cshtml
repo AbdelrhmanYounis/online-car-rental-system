@@ -1,0 +1,174 @@
+﻿@model OnlineCarRentalSystem.ViewModel.UserCustomer
+
+<div class="alert alert-success" style="display:none" id="success">
+    <strong>Registration successed</strong>
+</div>
+
+<div class="alert alert-danger" style="display:none" id="fail">
+    <strong>Registration Failed</strong>
+</div>
+<form id="RegistrationForm" enctype="multipart/form-data">
+    <div class="form-group">
+        @Html.LabelFor(x => x.user.Name, new { @class = "col-md-3 control-label " })
+        @Html.TextBoxFor(m => m.user.Name, new { @class = "form-control username" })
+        @Html.ValidationMessageFor(m => m.user.Name, "", new { @class = "text-danger col-md-offset-3 col-md-10 usererror" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(x => x.user.Email, new { @class = "col-md-3 control-label" })
+        @Html.TextBoxFor(m => m.user.Email, new { @class = "form-control", type = "email" })
+        @Html.ValidationMessageFor(m => m.user.Email, "", new { @class = "text-danger col-md-offset-3 col-md-10 emailerror" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(x => x.user.Password, new { @class = "col-md-3 control-label" })
+        @Html.PasswordFor(m => m.user.Password, new { @class = "form-control userpassword" })
+        @Html.ValidationMessageFor(m => m.user.Password, "", new { @class = "text-danger col-md-offset-3 col-md-10 passworderror" })
+    </div>
+    <div class="form-group">
+       
+        @Html.LabelFor(x => x.user.Address, new { @class = "col-md-3 control-label" })
+        @Html.TextBoxFor(m => m.user.Address, new { @class = "form-control useraddress" })
+        @Html.ValidationMessageFor(m => m.user.Address, "", new { @class = "text-danger col-md-offset-3 col-md-10 addresserror" })
+    </div>
+    <div class="form-group">
+       
+        @Html.LabelFor(x => x.user.Phone, new { @class = "col-md-3 control-label" })
+        @Html.TextBoxFor(m => m.user.Phone, new { @class = "form-control userphone" })
+        @Html.ValidationMessageFor(m => m.user.Phone, "", new { @class = "text-danger col-md-offset-3 col-md-10 phoneerror" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(x => x.customer.SNN, new { @class = "col-md-3 control-label" })
+        @Html.TextBoxFor(m => m.customer.SNN, new { @class = "form-control userssn" })
+        @Html.ValidationMessageFor(m => m.customer.SNN, "", new { @class = "text-danger col-md-offset-3 col-md-10 ssnerror" })
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-3 thumbnail" id="ImagePreview" style="height:90px; width:90px; display:none">
+            <img class="img-responsive" id="TargetImage" />
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(x => x.user.Image, new { @class = "col-md-3 control-label " })
+        <input type="file" name="upload" id="customer_image" />
+        <span id="error-image" style="display:none" class = "text-danger col-md-offset-3 col-md-10">
+           
+        </span>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(x => x.customer.Birthday, new { @class = "col-md-3 control-label" })
+        @Html.TextBoxFor(m => m.customer.Birthday,new { @class = "form-control" ,type ="date"})
+        @Html.ValidationMessageFor(m => m.customer.Birthday, "", new { @class = "text-danger col-md-offset-3 col-md-10" })
+    </div>
+
+<div class="form-group">
+    @Html.LabelFor(x => x.customer.prefer_car_category_id, new { @class = "col-md-3 control-label" })
+    @Html.DropDownListFor(m => m.customer.prefer_car_category_id, new SelectList(Model.categories, "id", "category"), "select Car Category", new { @class = "form-control" })
+    @Html.ValidationMessageFor(m => m.customer.prefer_car_category_id, "", new { @class = "text-danger col-md-offset-3 col-md-10" })
+</div>
+
+</form>
+<div class="modal-footer" style="border:none">
+    <input type="button" value="Submit" class="btn btn-success" id="submit" style="background-color:#2F4F4F;color:wheat;" />
+</div>
+@Scripts.Render("~/bundles/jqueryval")
+ <script>
+        var check_validation = false;
+        $(function () {
+            $("#customer_image").change(function () {
+
+                if ($("#customer_image").val() != "") {
+                    
+                    var filename = document.getElementById("customer_image").value;
+                    var extention = filename.substr(filename.lastIndexOf('.') + 1);
+                    var validextention = ['bmp', 'gif', 'png', 'jpg', 'PNG'];
+                    if ($.inArray(extention, validextention) == -1) {
+
+                        $("#error-image").text("please select Image by valid extention").fadeIn(2000);
+                        $("#ImagePreview").hide();
+                        $("#customer_image").text("");
+                        return false;
+                    }
+                    else {
+                        var File = this.files;
+                        ReadImage(File[0]);
+                        check_validation = true;
+                    }
+                }
+
+            });
+            var ReadImage = function (file) {
+                var reader = new FileReader;
+                var image = new Image;
+
+                reader.readAsDataURL(file)
+                reader.onload = function (_file) {
+                    image.src = _file.target.result;
+                    image.onload = function () {
+                        $("#TargetImage").attr('src', image.src);
+                        $("#ImagePreview").show();
+                        $("#error-image").text("");
+                    }
+                }
+            }
+        });
+        /**************************************************************/
+        $("#submit").click(function () {
+
+            var my_username = $('.username').val();
+            var my_useremail = $('.useremail').val();
+            var my_userpassword = $('.userpassword').val();
+            var my_useraddress = $('.useraddress').val();
+            var my_userphone = $('.userphone').val().toString();
+            var my_userssn = $('.userssn').val().toString();
+            debugger
+            if ($("#customer_image").val() == "") {
+                $("#error-image").text("please upload The Image").fadeIn(2000);
+                return false;
+            }
+
+          
+               
+            
+            else if (($("#RegistrationForm").valid()) && check_validation) {
+
+                var File = $("#customer_image")[0].files;
+                form_data = $("#RegistrationForm").serialize();
+                file_data = new FormData;
+                file_data.append("upload", File[0])
+
+                $.ajax({
+
+                    type: "POST",
+                    url: "/Home/Image_Customer_Name",
+                    contentType: false,
+                    processData: false,
+                    data: file_data,
+
+                    success: function (response) {
+                        if (response != "") {
+
+                            $.ajax({
+                                type: "POST",
+                                url: "/Home/Registration",
+                                data: form_data,
+                                success: function (response) {
+                                   
+                                    $("#success").fadeToggle(2000);
+                                    $("#success").fadeToggle(2000);
+                                    $("#submit").hide();
+                                },
+                                error: function () {
+
+                                    $("#fail").fadeToggle(2000);
+                                    $("#fail").fadeToggle(2000);
+                                   
+                                }
+                            })
+                        }
+                    }
+                })
+            }
+        });
+
+
+    </script>

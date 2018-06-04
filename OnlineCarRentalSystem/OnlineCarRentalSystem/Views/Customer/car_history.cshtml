@@ -1,0 +1,146 @@
+﻿@model OnlineCarRentalSystem.ViewModel.Renting
+    
+<div style="color:darkcyan">
+    <span class="alert alert-success" style="display:none" id="message">
+     
+    </span>
+<div class="form-group">
+    @Html.Label("From:", new { @class = "col-md-2 control-label" })
+    <input type="date" id="begin_rent">
+    <span id="error-date" class="text-danger col-md-offset-2" style="display:none">
+    </span>
+</div>
+
+<div class="form-group">
+    @Html.Label("Days Number :", new { @class = "col-md-2 control-label" })
+    <input type="number" id="end_rent" min="1" max="30">
+    <span id="error-day" class="text-danger col-md-offset-2" style="display:none;">
+    </span>
+    <br><br>
+</div>
+    </div>
+@if (Model.histories != null)
+{
+<div class="modal-body" id="period_button" style="background-color:#FFFFFF;border:none">
+  <a href="#" style="text-decoration:none;font-size:20px;color:darkcyan">
+    <span class="glyphicon glyphicon-hand-right" id="rotate_hand_right"></span>
+      <span class="glyphicon glyphicon-hand-down" id="rotate_hand_down"style="display:none"></span>
+    periods of not Avialable</a>
+    <div class="col-md-offset-2" id="ImagePreview" hidden>
+        <img src="~/uploads/AjaxLoader.gif" class="img-responsive"/>
+    </div>
+ <div id="period_detial" hidden style="padding-top:50px">
+     
+    @foreach (var subitem in Model.histories)
+    {
+        if (DateTime.Parse(subitem.begin_rent.ToShortDateString()) < DateTime.Parse(@DateTime.Now.ToShortDateString()))
+        {
+            continue;
+        }
+        var p_1 = subitem.begin_rent.ToShortDateString();
+        var p_2 = subitem.end_rent.ToShortDateString();
+
+        <div style="background-color:#87CEEB;border-radius:50px;padding-top:10px">
+        <ul>
+            <li>
+                @Html.Label("From") :
+                @Html.DisplayFor(modelItem => p_1)
+            </li>
+            <li>
+                @Html.Label("To") :
+                @Html.DisplayFor(modelItem => p_2)
+            </li>
+        </ul>
+            </div>
+    }
+
+
+</div>
+    </div>
+}
+    <div class="modal-footer"style="border:none;margin:-20px">
+        <button type="button" class="btn" onclick="rent()" style="background-color:#2F4F4F;color:wheat;">Rent</button>
+    </div>
+   
+    <script>
+        $(function () {
+            /******************************************************************************/
+            $("#begin_rent").change(function () {
+                if ($("#begin_rent").val() != "") {
+                    $("#error-date").hide();
+                }
+            });
+            /******************************************************************************/
+            $("#end_rent").change(function () {
+                   
+                if ($("#end_rent").val() != "") {
+                    $("#error-day").hide();
+                }
+            });
+            /******************************************************************************/
+            $("#period_button").click(function () {
+                $("#ImagePreview").fadeToggle(1000, function (){
+                    $("#ImagePreview").fadeToggle(1000, function (){
+                        $("#rotate_hand_right").toggle(1000);
+                            $("#rotate_hand_down").toggle(1000);
+                            $("#period_detial").fadeToggle(1000);
+                        
+                    }); 
+                });
+
+                
+               
+                
+
+                
+               
+            });
+            /******************************************************************************/
+        });
+       
+        /******************************************************************************/
+        var rent= function () {
+            debugger
+            if ($("#begin_rent").val() == "") {
+                $("#error-date").text("please insert begin rent").fadeIn(2000);
+                return false;
+            }
+            else if ($("#end_rent").val() == "") {
+                $("#error-day").text("please insert number of days").fadeIn(2000);
+                return false;
+            }
+            else{
+                var carId =@Model.RentCarId;
+                var start_duration = $("#begin_rent").val();
+                var end_duration = $("#end_rent").val();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Customer/RentCar",
+                    data:{id:carId,begin:start_duration,day_num:end_duration},
+
+                    success: function (response) {
+
+                        if(response==-2)
+                        {
+                            $("#error-date").text("select date after date of now and for 60 day").fadeIn(2000);
+                            
+                        }
+                        else if (response == -1) {
+                            $("#error-date").text("your account isn't enough").fadeIn(2000);
+                           
+                        }
+                        else if (response == -3) {
+                            $("#error-date").text("the car not avialable duration").fadeIn(2000);
+                          
+                        }
+                        else if (response >=0) {
+                            $("#error-date").text("the system send you an e-mail").fadeIn(2000);
+                           
+                        }
+                        //window.location.href = "/Customer/customer_page";
+                    }
+                })
+            }
+        }
+    </script>

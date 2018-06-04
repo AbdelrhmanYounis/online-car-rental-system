@@ -1,0 +1,173 @@
+﻿@model OnlineCarRentalSystem.Models.User
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+    Styles.Render("~/Content/file.css");
+    
+}
+<div id="new_body">
+    <br><br>
+    <div class="alert alert-success" style="display:none" id="success">
+        <strong>Edit successed</strong>
+    </div>
+
+    <div class="alert alert-danger" style="display:none" id="fail">
+        <strong>Edit Failed</strong>
+    </div>
+
+    <form enctype="multipart/form-data" id="EditProfile">
+        @Html.HiddenFor(x => x.Id)
+        <div class="container-fluid">
+
+            <div class="panel panel-heading" id="image_div">
+                <div class="col-md-offset-2" id="ImagePreview">
+                    <img src="~/uploads/user/@Model.Image" class="img-responsive" id="TargetImage" />
+
+                </div>
+                <span id="error-image" class="text-danger" style="display:none">
+                </span>
+                <br><br>
+                <input type="file" class="file1" name="upload" id="my_image" />
+            </div>
+
+            <div class="panel panel-body ">
+
+                <div class="form-group my-seter" >
+                    @Html.TextBoxFor(m =>m.Address, new { @class = "form-control my_new_edit my_s", @id = "address", @placeholder = @Model.Address })
+                </div>
+                <div class="form-group my-seter">
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control my_new_edit", @id = "email", @placeholder = @Model.Email })
+                </div>
+                <div class="form-group my-seter">
+                    @Html.TextBoxFor(m => m.Phone, new { @class = "form-control my_new_edit", @id = "phone", @placeholder = @Model.Phone })
+                </div>
+                <div class="form-group my-seter">
+                    @Html.PasswordFor(m => m.Password, new { @class = "form-control my_new_edit", @id = "password", @placeholder ="password" })
+                </div>
+                <div class="form-group" id="saving" hidden>
+                    <button class="btn btn-success get-my-btn" type="button" id="save">save</button>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+@section scripts
+{
+@Scripts.Render("~/bundles/jqueryval")
+    <script>
+        var check_validation = true;
+       
+        $(function () {
+            $("#phone,#address,#email,#password").keyup(function () {
+                $("#saving").show();
+            });
+            $('body').css({
+                'backgroundImage': 'url("../uploads/mazen/1.jpg")',
+                'backgroundSize': 'cover',
+                'backgroundPositionY': '-200px'
+            });
+
+            $('body').height($('window').height());
+            
+
+        });
+        /****************************************************************/
+            $(function () {
+                $("#my_image").change(function () {
+
+                    if ($("#my_image").val() != "") {
+
+                        var filename = document.getElementById("my_image").value;
+                        var extention = filename.substr(filename.lastIndexOf('.') + 1);
+                        var validextention = ['bmp', 'gif', 'png', 'jpg', 'PNG'];
+                        if ($.inArray(extention, validextention) == -1) {
+                            $("#error-image").text("please select Image by valid extention").fadeIn(3000);
+                            $("#ImagePreview").hide();
+                            check_validation = false;
+                            $("#my_image").val("");
+                           
+                        }
+                        else {
+                            var File = this.files;
+                            ReadImage(File[0]);
+                            check_validation = true;
+                            $("#saving").show();
+                            
+                        }
+                    }
+
+                });
+    /*****************************************************************************************/
+                var ReadImage = function (file) {
+                    var reader = new FileReader;
+                    var image = new Image;
+
+                    reader.readAsDataURL(file)
+                    reader.onload = function (_file) {
+                        image.src = _file.target.result;
+                        image.onload = function () {
+                            $("#TargetImage").attr('src', image.src);
+                            $("#ImagePreview").show();
+                            $("#error-image").text("");
+                        }
+                    }
+                }
+            });
+            /********************************************************************************/
+            $("#save").click(function () {
+
+                if (check_validation) {
+
+                    var File = $("#my_image")[0].files;
+                    form_data = $("#EditProfile").serialize();
+
+                    file_data = new FormData;
+                    file_data.append("upload", File[0])
+
+                    $.ajax({
+
+                        type: "POST",
+                        url: "/User/Image_Profile_Name",
+                        contentType: false,
+                        processData: false,
+                        data: file_data,
+
+                        success: function (response) {
+
+                            $.ajax({
+                                type: "POST",
+                                url: "/User/Index",
+                                data:form_data,
+                                success: function (response) {
+
+                                    $("#success").slideDown(2000);
+                                    $("#success").slideUp(2000);
+
+                                },
+                                error: function () {
+
+                                    $("#fail").slideDown(2000);
+                                    $("#fail").slideUp(2000);
+                                }
+                            })
+
+                        },
+                        error: function () {
+
+                            $("#fail").slideDown(2000);
+                            $("#fail").slideUp(2000);
+                        }
+                    })
+                }
+            });
+        /********************************************************************************/
+            $(function () {
+                $(".file1").wrap("<div class='custom-file'></div>'");
+                $(".custom-file").prepend("<span class = 'file-title'><span class='glyphicon glyphicon-camera'></span>&nbsp;&nbsp;Click To Upload Image</span>");
+                $(".file1").change(function () {
+                    $(this).prev('span').text($(this).val());
+                });
+            });
+    </script>
+}

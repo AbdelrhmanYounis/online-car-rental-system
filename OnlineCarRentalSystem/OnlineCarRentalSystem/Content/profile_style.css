@@ -1,0 +1,71 @@
+﻿.panel
+{
+    background-color: transparent;
+    margin: auto
+}
+
+.panel *
+{
+    margin: auto;
+}
+
+#image_div
+{
+
+    background-color: #EEE;
+    border-radius: 20px;
+    width: 500px;
+    height: 300px
+}
+
+#ImagePreview
+{
+    width: 100%;
+    height: 77%;
+    background-color: transparent;
+}
+
+.img-responsive
+{
+    height: 100%;
+}
+
+#image_div img
+{
+    width: 100%;
+    height: 100%
+}
+
+.my_new_edit
+{
+    background-color: #EEE;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    width: 700px
+}
+#saving
+{
+    width: 300px;
+    margin: auto
+}
+
+.my-seter
+{
+    width: 700px;
+    margin: auto
+}
+
+.get-my-btn
+{
+    width: 300px
+}
+
+.my_s
+{
+    width: 1000px
+}
+
+.seeet
+{
+    top: -7px
+}

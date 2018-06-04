@@ -1,0 +1,103 @@
+﻿@model OnlineCarRentalSystem.Models.Category
+@{
+    ViewBag.Title = "New Category";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<h1 class="head text-center">New Category</h1>
+@using (Html.BeginForm("add_category", "Category", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+
+    <div class="edit-form">
+        @Html.LabelFor(x => x.category, new { @class = "col-md-2 control-label margy" })
+        @Html.TextBoxFor(m => m.category, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.category, "", new { @class = "text-danger col-md-offset-2 col-md-10" })
+
+
+   
+        <div class="col-md-offset-2 thumbnail" id="ImagePreview" style="height:90px; width:90px; display:none">
+            <img class="img-responsive" id="TargetImage" />
+        </div>
+   
+        @Html.LabelFor(x => x.Image, new { @class = "col-md-2 control-label " })
+        <input type="file" class="file1 input-lg" name="upload" id="category_image" />
+        <span id="error-image" style="display:none">
+            @Html.Label("", new { @class = "text-danger col-md-offset-2 col-md-10" })
+        </span>
+    
+        @Html.LabelFor(x => x.description, new { @class = "col-md-2 control-label margy" })
+        @Html.TextAreaFor(m => m.description, new { @class = "form-control"})
+   
+       
+            <input type="submit" value="Add" class="btn btn-block btn-primary" style="margin-top: 10px" />
+        </div>
+        <div class="text-left cl">
+        @Html.ActionLink("Categories List", "retrieve_categories", "Category")
+   </div>
+}
+
+
+@section scripts
+{
+    <script>
+
+    $(function () {
+        $("#category_image").change(function () {
+
+           
+            if ($("#category_image").val() != "")
+            {
+                //extention validation
+                var filename = document.getElementById("category_image").value;
+                var extention = filename.substr(filename.lastIndexOf('.') + 1);
+                var validextention = ['bmp', 'gif', 'png', 'jpg','PNG'];
+                if($.inArray(extention,validextention)==-1)
+                {
+
+                    $("#error-image").text("please select Image by valid extention").fadeIn(3000);
+                    $("#ImagePreview").hide();
+                    $("#category_image").text("");
+                    return false;
+                }
+                else
+                {
+                     var File=this.files;
+                     ReadImage(File[0]);
+
+                }
+            }
+
+        });
+        var ReadImage = function (file) {
+            var reader = new FileReader;
+            var image = new Image;
+
+            reader.readAsDataURL(file)
+            reader.onload = function (_file) {
+                image.src = _file.target.result;
+                image.onload = function () {
+                    $("#TargetImage").attr('src', image.src);
+                    $("#ImagePreview").show();
+                    $("#error-image").text("");
+                }
+            }
+        }
+    });
+    // empty validation
+    
+    $("#Add").click(function (){
+        if ($("#category_image").val() == "") {
+
+            $("#error-image").text("please select Image of Car").fadeIn(3000);
+            return false;
+        }
+    });
+    $(function () {
+        $(".file1").wrap("<div class='custom-file'></div>'");
+        $(".custom-file").prepend("<span class = 'file-title'>Click To Upload Category Image</span>");
+        $(".file1").change(function () {
+            $(this).prev('span').text($(this).val());
+        });
+    });
+    </script>
+}

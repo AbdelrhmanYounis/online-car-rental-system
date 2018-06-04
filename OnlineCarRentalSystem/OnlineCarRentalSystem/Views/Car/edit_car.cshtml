@@ -1,0 +1,151 @@
+﻿@model OnlineCarRentalSystem.ViewModel.CarCategory
+
+
+
+    <form id="editing" enctype="multipart/form-data">
+        @Html.HiddenFor(x => x.car.Id)
+        <div class="form-group">
+            @Html.LabelFor(x => x.car.car_category_id, new { @class = "col-md-2 control-label" })
+
+            @Html.DropDownListFor(x => x.car.car_category_id, new SelectList(Model.categories, "id", "category"), new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.car.car_category_id, "", new { @class = "text-danger col-md-offset-2 col-md-10" })
+
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(x => x.car.Model, new { @class = "col-md-2 control-label" })
+            @Html.TextBoxFor(m => m.car.Model, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.car.Model, "", new { @class = "text-danger col-md-offset-2 col-md-10" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(x => x.car.Color, new { @class = "col-md-2 control-label" })
+            @Html.TextBoxFor(m => m.car.Color, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.car.Color, "", new { @class = "text-danger col-md-offset-2 col-md-10" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(x => x.car.NumberOfChair, new { @class = "col-md-2 control-label" })
+            @Html.TextBoxFor(m => m.car.NumberOfChair, new { @class = "form-control", type = "number" })
+            @Html.ValidationMessageFor(m => m.car.NumberOfChair, "", new { @class = "text-danger col-md-offset-2 col-md-10" })
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 thumbnail" id="ImagePreview" style="height:90px; width:90px">
+                <img src="~/uploads/car/@Model.car.Image" class="img-responsive" id="TargetImage" />
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(x => x.car.Image, new { @class = "col-md-2 control-label " })
+            <input type="file" name="upload" id="car_image" />
+            <span id="error-image" class="text-danger col-md-offset-2 col-md-10" style="display:none">
+            </span>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(x => x.car.PriceOfRent, new { @class = "col-md-2 control-label" })
+            @Html.TextBoxFor(m => m.car.PriceOfRent, new { @class = "form-control", type = "number" })
+            @Html.ValidationMessageFor(m => m.car.PriceOfRent, "", new { @class = "text-danger col-md-offset-2 col-md-10" })
+        </div>
+
+      
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dissmiss="modal" id="close">cancel</button>
+           
+            <input type="button" value="Edit" class="btn btn-success" id="edit" />
+        </div>
+
+        </form>
+
+
+
+@Scripts.Render("~/bundles/jqueryval")
+<script>
+    var check_validation = true;
+    $("#close").click(function () { $("#edit_modal").modal('hide'); })
+
+    $(document).ready(function () {
+        $("#car_image").change(function () {
+
+
+            if ($("#car_image").val() != "") {
+                //extention validation
+                var filename = document.getElementById("car_image").value;
+                var extention = filename.substr(filename.lastIndexOf('.') + 1);
+                var validextention = ['bmp', 'gif', 'png', 'jpg', 'PNG'];
+                if ($.inArray(extention, validextention) == -1) {
+
+                    $("#error-image").text("please select Image by valid extention").fadeIn(3000);
+                    $("#ImagePreview").hide();
+                    $("#car_image").text("");
+                    check_validation = false;
+                }
+                else {
+                    var File = this.files;
+                    ReadImage(File[0]);
+                    check_validation = true;
+                }
+            }
+
+        });
+        var ReadImage = function (file) {
+            var reader = new FileReader;
+            var image = new Image;
+
+            reader.readAsDataURL(file)
+            reader.onload = function (_file) {
+                image.src = _file.target.result;
+                image.onload = function () {
+                    $("#TargetImage").attr('src', image.src);
+                    $("#ImagePreview").show();
+                    $("#error-image").text("");
+                }
+            }
+        }
+
+    });
+    /****************************************************************************************/
+    $("#edit").click(function () {
+
+        if (($("#editing").valid()) && check_validation) {
+
+            var File = $("#car_image")[0].files;
+            form_data = $("#editing").serialize();
+            file_data = new FormData;
+            file_data.append("upload", File[0])
+
+            $.ajax({
+
+                type: "POST",
+                url: "Image_File_Name",
+                contentType: false,
+                processData: false,
+                data: file_data,
+                success: function (response) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/Car/edit_car",
+                        data: form_data,
+                        success: function (response) {
+                            if (response) {
+                                $("#edit_modal").modal('hide');
+                                window.location.href = "/Car/retrieve_cars?user_role_id="+2;
+                            }
+                        },
+                        error: function () {
+                            $("#edit_modal").modal('hide');
+                            $("#fail").slideDown(2000);
+                            $("#fail").slideUp(2000);
+                        }
+                    })
+                }
+            })
+            
+        }
+    });
+</script>
+
+
+
+
+
+
+

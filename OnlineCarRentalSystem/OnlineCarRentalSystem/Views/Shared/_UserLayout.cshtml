@@ -1,0 +1,103 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Page</title>
+
+    @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/bootstrap.css")
+    @Styles.Render("~/Content/NotFound.css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Styles.Render("~/Content/file.css")
+    @Styles.Render("~/Content/style.css")
+    @Styles.Render("~/Content/style_cat.css")
+    @Styles.Render("~/Content/profile_style.css")
+</head>
+<body class="">
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("Cars for Rent", "Index", "Home", new { area = "" }, new { @class = "navbar-brand logo" })
+            </div>
+            <div class="navbar-collapse collapse">
+
+                <ul class="nav navbar-nav">
+                   @if (Session["UserRoleId"].Equals(1))
+                   {
+                    <li>@Html.ActionLink("Profile", "Index", "User")</li>
+
+                        <li>@Html.ActionLink("Manage Cars", "retrieve_cars", "Car", new { user_role_id = 1 }, null)</li>
+                        <li>@Html.ActionLink("Add Category", "add_category", "Category")</li>
+                        <li>@Html.ActionLink("Manage Categories", "retrieve_categories", "Category")</li>
+                        <li>@Html.ActionLink("Manage Users", "retrieve_users", "Admin", new { user_role_id = 1 }, null)</li>
+                        <li>@Html.ActionLink("Show Report", "show_report", "Admin")</li>
+
+                   }
+                /****************************************************************/
+                    else if (Session["UserRoleId"].Equals(2))
+                    {
+                        <li>@Html.ActionLink("Profile", "Index", "User")</li>
+
+                        <li>@Html.ActionLink("Manage Cars", "retrieve_cars", "Car", new { user_role_id = 2 }, null)</li>
+                        <li>@Html.ActionLink("Add Category", "add_category", "Category")</li>
+                        <li>@Html.ActionLink("Manage Categories", "retrieve_categories", "Category")</li>
+                        <li>@Html.ActionLink("Manage Customers", "retrieve_users", "Admin", new { user_role_id = 2 }, null)</li>
+
+                    }
+                    /****************************************************************/
+                    else if (Session["UserRoleId"].Equals(3))
+                    {
+                    <li>@Html.ActionLink("Show Cars", "retrieve_cars", "Car", new { user_role_id = 3},null)</li>
+                    }
+
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                @if (Session["UserId"] != null)
+                {
+                    <li>@Html.ActionLink("Welcome : "+ Session["UserName"], "", "")</li>
+                    <li>@Html.ActionLink("Log out", "Index", "Home")</li>
+                }
+                else
+                    {
+                    <li>@Html.ActionLink("Registar", "Registration", "Home")</li>
+                    <li>@Html.ActionLink("Log in", "UserLogin", "Home")</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container body-content ">
+
+        @RenderBody()
+
+        <hr />
+     
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+   
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/jquery-1.12.1.min.js"></script>
+    <script src="~/Scripts/bootstrap.js"></script>
+    <script src="~/Scripts/circle-progress.min.js"></script>
+    @RenderSection("scripts", required: false)
+
+    <script>
+        $(function () {
+            $('.dropdown-toggle span').on('click', function () {
+                $('.appear').fadeIn(500);
+            });
+
+            $('body').css('backgroundColor', '#EEE');
+        });
+    </script>
+
+</body>
+</html>

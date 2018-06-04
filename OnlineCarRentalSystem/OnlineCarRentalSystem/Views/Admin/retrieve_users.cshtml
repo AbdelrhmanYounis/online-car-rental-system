@@ -1,0 +1,382 @@
+﻿@model OnlineCarRentalSystem.ViewModel.UsersRoles
+@{
+    ViewBag.Title = "retrieve_users";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+    Styles.Render("~/Content/file.css");
+    Styles.Render("~/Content/style.css");
+}
+<br>
+<div class="exprets" style="border-radius:50px; padding-left:3%">
+    <br>
+    <input class="form-control" placeholder="Search" type="text" id="search_box">
+    <br>
+</div>
+<br>
+<div id="DataSearching">
+            @foreach (var item in Model.roles)
+            {
+        <div class="panel panel-primary">
+
+            <div class="section-title exprets" style="padding:1%">
+
+                <h3>
+                    @Html.DisplayFor(modelItem => item.Type)
+                    @if (item.id == 2)
+                    {
+                        <button style="margin-left:90%;margin-top:-5%" type="button" onclick="new_admin_modal()" class="btn btn-primary glyphicon glyphicon-new-window">New</button>
+                    }
+                </h3>
+
+            </div>
+
+
+            <div class="panel-body">
+
+                @foreach (var subitem in Model.users.Where(c => c.RoleTypeId == item.id))
+                {
+
+                    <div class="col-md-4 text-center block" style="margin-bottom:30px" id="user_@subitem.Id">
+                        <div class="card">
+                            <div class="front">
+                                <header>
+                                    <img src="~/uploads/user/@subitem.Image" />
+                                </header>
+
+
+                            </div>
+                            <div class="back">
+
+                                <ul>
+                                    <li>
+                                        @Html.LabelFor(x => x.users.Single().Name) :
+                                        @Html.DisplayFor(modelItem => subitem.Name)
+                                    </li>
+                                    <li>
+                                        @Html.LabelFor(x => x.users.Single().Address) :
+                                        @Html.DisplayFor(modelItem => subitem.Address)
+                                    </li>
+                                    <li>
+                                        @Html.LabelFor(x => x.users.Single().Email) :
+                                        @Html.DisplayFor(modelItem => subitem.Email)
+                                    </li>
+                                    <li>
+                                        @Html.LabelFor(x => x.users.Single().Phone) :
+                                        @Html.DisplayFor(modelItem => subitem.Phone)
+                                    </li>
+                                    <li>
+                                        @if (subitem.RoleTypeId == 3)
+                                        {
+                                            var customer = Model.customers.SingleOrDefault(c => c.userId == subitem.Id);
+                                            @Html.Label("duration block : ");
+                                            if (customer.Isblocked == 0)
+                                            {
+                                                @Html.Label("No");
+                                            }
+                                            else
+                                            {
+                                                @Html.DisplayFor(modelItem => Model.historyofblock.Where(c => c.customer_id == customer.Id)
+                            .OrderByDescending(w => w.Id)
+                            .FirstOrDefault()
+                            .block_duration);
+
+                                            }
+                                        }
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        @{ var Customer = Model.customers.SingleOrDefault(c => c.userId == subitem.Id);
+                            if (Customer != null)
+                            {
+                                var block_of_customer = Model.historyofblock.Where(c => c.customer_id == Customer.Id)
+                                                                                               .OrderByDescending(w => w.Id)
+                                                                                               .FirstOrDefault();
+
+                                <button type="button" onclick="CustomerModalEdit(@subitem.Id,'@subitem.Name',@Customer.account)" class="btn btn-primary glyphicon glyphicon-edit">Edit</button>
+                                if (Customer.Isblocked == 0)
+                                {
+                                    <button type="button" onclick="CustomerModalBlock(@subitem.Id,'@subitem.Name')" class="btn btn-primary glyphicon glyphicon-edit">Block</button>
+                                }
+                                else
+                                {
+
+                                    var until = block_of_customer.end_block;
+                                    <button type="button" onclick="CustomerModalUnblock(@subitem.Id,'@subitem.Name',@until.Day,@until.Month,@until.Year)" class="btn btn-primary glyphicon glyphicon-edit">Unblock</button>
+                                }
+                            }
+                        }
+                        <button type="button" onclick="UserModalDelete(@subitem.Id,'@subitem.Name')" class="btn btn-danger glyphicon glyphicon-remove">Delete</button>
+                        @if (subitem.RoleTypeId == 2)
+                        {
+                            <button type="button" onclick="AdminModalSuper(@subitem.Id,'@subitem.Name')" class="btn btn-info glyphicon glyphicon-adjust">Super</button>
+
+                        }
+                    </div>
+
+                            }
+
+
+            </div>
+
+        </div>
+
+                                }
+
+
+                           
+                                </div>
+
+@*------------------------------------------------------------------*@
+<input type="hidden" id="hidden_user_id">
+
+<div id="delete_super_edit_modal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" id="modify_title"></h4>
+            </div>
+            <div class="modal-body">
+                <div id="modify_body">
+                </div>
+
+                <div id="edit_customer_account" hidden>
+                    additional account : <input type="number" id="additional_account">
+                </div>
+
+                <div id="block_customer" hidden>
+                    <input type="number" id="block_duration">&nbsp;&nbsp; day
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dissmiss="modal" id="close">cancel</button>
+                <span id="delete_button" hidden>
+                    <button type="button" class="btn btn-success" onclick="delete_user()">Delete</button>
+                </span>
+                <span id="edit_button" hidden>
+                    <button type="button" class="btn btn-success" onclick="edit_customer_account()">Edit</button>
+                </span>
+                <span id="super_button" hidden>
+                    <button type="button" class="btn btn-success" onclick="super_admin()">Save</button>
+                </span>
+                <span id="block_button" hidden>
+                    <button type="button" class="btn btn-success" onclick="block_customer(1)">Block</button>
+                </span>
+                <span id="unblock_button" hidden>
+                    <button type="button" class="btn btn-success" onclick="block_customer(0)">UnBlock</button>
+                </span>
+            </div>
+        </div>
+
+    </div>
+</div>
+@*---------------------new admin---------------------------------------------*@
+<div id="new_modal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:#2F4F4F;">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="modal-title">new Admin</h3>
+            </div>
+            <div class="modal-body" id="new_admin_modal">
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+@***********************@
+@section scripts
+{
+    <script>
+
+        $(document).ready(function () {
+
+            $("#search_box").keyup(function () {
+
+                var search_text = $("#search_box").val();
+                $.ajax({
+                        type: "POST",
+                        url: "/Admin/search_user?search_text=" + search_text,
+                        contentType: "html",
+
+                        success: function (response) {
+                            $("#DataSearching").html(response);
+                        }
+
+                    })
+
+            });
+            /****************************************************************************/
+
+        });
+        /****************************************************************************/
+        $("#close").click(function () { $(this).parent().parent().parent().parent().modal('hide'); })
+
+        /****************************************************************************/
+        function CustomerModalEdit(customer_id,customer_name,customer_account) {
+            $("#hidden_user_id").val(customer_id);
+
+            $("#modify_title").text("Edit Customer");
+            $("#modify_body").text(customer_name + " has \" " + customer_account + " \" in his Account" );
+            $("#edit_customer_account").show();
+            $("#delete_super_edit_modal").modal('show');
+            $("#delete_button").hide();
+            $("#edit_button").show();
+            $("#super_button").hide();
+            $("#block_button").hide();
+            $("#block_customer").hide();
+           
+        }
+        /****************************************************************************/
+        function CustomerModalBlock(customer_id, customer_name) {
+            $("#hidden_user_id").val(customer_id);
+
+            $("#modify_title").text("Block Customer");
+            $("#modify_body").text(customer_name + " will be blocked for :");
+            $("#block_customer").show();
+            $("#delete_super_edit_modal").modal('show');
+            $("#block_button").show();
+            $("#delete_button").hide();
+            $("#edit_button").hide();
+            $("#super_button").hide();
+            $("#edit_customer_account").hide();
+        }
+        /****************************************************************************/
+        function CustomerModalUnblock(customer_id, customer_name, block_duration_day, block_duration_month, block_duration_year) {
+            $("#hidden_user_id").val(customer_id);
+
+            $("#modify_title").text("UnBlock Customer");
+            $("#modify_body").text(customer_name + " still blocked untill " + block_duration_day +" : "+block_duration_month+" : "+ block_duration_year);
+            $("#delete_super_edit_modal").modal('show');
+            $("#unblock_button").show();
+            $("#delete_button").hide();
+            $("#edit_button").hide();
+            $("#super_button").hide();
+            $("#block_button").hide();
+            $("#edit_customer_account").hide();
+            $("#block_customer").hide();
+        }
+        /****************************************************************************/
+        function AdminModalSuper(user_id,user_name) {
+            $("#hidden_user_id").val(user_id);
+            $("#modify_title").text("Edit Privilege ");
+            $("#modify_body").text(" Are You Sure ? You want to make \"" + user_name + " \"as a Super Admin");
+            $("#delete_super_edit_modal").modal('show');
+            $("#super_button").show();
+            $("#delete_button").hide();
+            $("#edit_button").hide();
+            $("#unblock_button").hide();
+            $("#block_button").hide();
+            $("#edit_customer_account").hide();
+            $("#block_customer").hide();
+        }
+        /****************************************************************************/
+        function UserModalDelete(user_id,user_name) {
+            $("#hidden_user_id").val(user_id);
+            $("#modify_title").text("Delete User");
+            $("#modify_body").text(" Are You Sure ? You want to delete "+user_name);
+            $("#delete_super_edit_modal").modal('show');
+            $("#edit_customer_account").hide();
+            $("#delete_button").show();
+            $("#edit_button").hide();
+            $("#super_button").hide();
+        }
+        /****************************************************************************/
+        var delete_user= function () {
+            var userId = $("#hidden_user_id").val();
+            $.ajax({
+                type: "POST",
+                url: "/SuperAdmin/delete_user",
+                data: { id: userId },
+
+                success: function (response) {
+                    $("#delete_super_edit_modal").modal('hide');
+                    $("#user_" + userId).remove();
+
+                }
+
+            })
+        }
+        /****************************************************************************/
+        var super_admin = function () {
+            var userId = $("#hidden_user_id").val();
+            $.ajax({
+                type: "POST",
+                url: "/SuperAdmin/super_admin",
+                data: { id: userId },
+
+                success: function (response) {
+                    $("#delete_super_edit_modal").modal('hide');
+                    alert("your Account is deleted goodbye "+response);
+                    $("#user_" + userId).remove();
+                    window.location.href = "/Home/Index";
+                }
+
+            })
+        }
+        /*************************************************************************************/
+        var edit_customer_account= function () {
+            var userId = $("#hidden_user_id").val();
+            var addedAccount=$("#additional_account").val();
+           $.ajax({
+                type: "POST",
+                url: "/Admin/editCustomerAccount",
+                data: { user_id: userId, addtionalAccount: addedAccount },
+
+                success: function (response) {
+                    $("#delete_super_edit_modal").modal('hide');
+                    if (response == 2) {
+                        window.location.href = "/Admin/retrieve_users?user_role_id="+2;
+                    }
+                    if (response == 1)
+                        {
+                        window.location.href = "/Admin/retrieve_users?user_role_id="+1;
+                        }
+                    }
+
+            })
+        }
+        /*************************************************************************************/
+
+        var block_customer = function (block) {
+            var userId = $("#hidden_user_id").val();
+            var BlockDuration=0;
+            if (block != 0) {
+                BlockDuration = $("#block_duration").val();
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "BlockCustomer",
+                data: { user_id: userId, BlockDuration: BlockDuration },
+
+                success: function (response) {
+                    $("#delete_super_edit_modal").modal('hide');
+                    //window.location.href = "/Admin/retrieve_users";
+
+                }
+
+            })
+        }
+        /*************************************************************************************/
+        var new_admin_modal = function () {
+
+            var url = "/SuperAdmin/add_admin";
+            $("#new_admin_modal").load(url, function () {
+
+                $("#new_modal").modal('show');
+            })
+        }
+        /****************************************************************************/
+
+
+    </script>
+
+}
